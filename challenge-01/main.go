@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"unicode"
 )
 
 type FileInfo struct {
@@ -51,6 +52,7 @@ func main() {
 	}
 
 	buffer := make([]byte, 32*1024)
+	inWord := false
 
 	for {
 		n, err := file.Read(buffer)
@@ -66,6 +68,9 @@ func main() {
 		}
 		if getLines {
 			processLines(buffer[:n], myFile)
+		}
+		if getWords {
+			processWords(buffer[:n], myFile, &inWord)
 		}
 	}
 
@@ -92,4 +97,17 @@ func processBytes(buffer []byte, file *FileInfo) {
 
 func processLines(buffer []byte, file *FileInfo) {
 	file.Lines += bytes.Count(buffer, []byte{'\n'})
+}
+
+func processWords(buffer []byte, file *FileInfo, inWord *bool) {
+	for _, b := range buffer {
+		if unicode.IsSpace(rune(b)) {
+			*inWord = false
+		} else {
+			if !*inWord {
+				file.Words++
+				*inWord = true
+			}
+		}
+	}
 }
