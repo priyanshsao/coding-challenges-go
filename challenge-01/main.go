@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"unicode"
+	"unicode/utf8"
 )
 
 type FileInfo struct {
@@ -52,6 +53,7 @@ func main() {
 	}
 
 	buffer := make([]byte, 32*1024)
+	leftOver := []byte{}
 	inWord := false
 
 	for {
@@ -72,6 +74,7 @@ func main() {
 		if getWords {
 			processWords(buffer[:n], myFile, &inWord)
 		}
+		if getRunes {processRunes(buffer[:n], myFile, &leftOver)}
 	}
 
 	if getBytes {
@@ -109,5 +112,24 @@ func processWords(buffer []byte, file *FileInfo, inWord *bool) {
 				*inWord = true
 			}
 		}
+	}
+}
+
+func processRunes(buffer []byte, file *FileInfo, leftOver *[]byte) {
+
+	buffer = append(*leftOver, buffer...)
+	*leftOver = (*leftOver)[:0]
+
+	i := 0
+	for i < len(buffer) {
+		if !utf8.FullRune(buffer[i:]) {
+			*leftOver = append(*leftOver, buffer[i:]...)
+			break
+		}
+		// need to add error check for utf8.RuneError
+		_, size := utf8.DecodeRune(buffer[i:])
+		
+		file.Runes++
+		i += size
 	}
 }
