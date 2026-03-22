@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -63,6 +64,9 @@ func main() {
 		if getBytes {
 			processBytes(buffer[:n], myFile)
 		}
+		if getLines {
+			processLines(buffer[:n], myFile)
+		}
 	}
 
 	if getBytes {
@@ -84,4 +88,8 @@ func processBytes(buffer []byte, file *FileInfo) {
 	if len(buffer) > 0 {
 		file.Bytes += len(buffer)
 	}
+}
+
+func processLines(buffer []byte, file *FileInfo) {
+	file.Lines += bytes.Count(buffer, []byte{'\n'})
 }
