@@ -74,7 +74,9 @@ func main() {
 		if getWords {
 			processWords(buffer[:n], myFile, &inWord)
 		}
-		if getRunes {processRunes(buffer[:n], myFile, &leftOver)}
+		if getRunes {
+			processRunes(buffer[:n], myFile, &leftOver)
+		}
 	}
 
 	if getBytes {
@@ -128,7 +130,7 @@ func processRunes(buffer []byte, file *FileInfo, leftOver *[]byte) {
 		}
 		// need to add error check for utf8.RuneError
 		_, size := utf8.DecodeRune(buffer[i:])
-		
+
 		file.Runes++
 		i += size
 	}
