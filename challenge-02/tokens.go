@@ -14,7 +14,7 @@ const (
 
 // Value tokens
 const (
-	String tokenType = "STRING"
+	String tokenType = "string"
 	Number tokenType = "NUMBER"
 	True   tokenType = "TRUE"
 	False  tokenType = "FALSE"
