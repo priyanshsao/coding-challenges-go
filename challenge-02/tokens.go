@@ -15,10 +15,10 @@ const (
 // Value tokens
 const (
 	String tokenType = "string"
-	Number tokenType = "NUMBER"
-	True   tokenType = "TRUE"
-	False  tokenType = "FALSE"
-	Null   tokenType = "NULL"
+	Number tokenType = "number"
+	True   tokenType = "true"
+	False  tokenType = "false"
+	Null   tokenType = "null"
 )
 
 // Special
