@@ -8,6 +8,12 @@ type Lexer struct {
 	line     int
 }
 
+func New(input []byte) *Lexer {
+	l := &Lexer{input: input, line: 1}
+	l.Read()
+	return l
+}
+
 func (l *Lexer) Read() {
 	if l.next >= len(l.input) {
 		l.char = 0
