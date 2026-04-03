@@ -139,6 +139,9 @@ func isDigit(char byte) bool {
 
 func (l *Lexer) SkipWhiteSpace() {
 	for l.char == ' ' || l.char == '\t' || l.char == '\n' || l.char == '\r' {
+		if l.char == '\n' {
+			l.line++
+		}
 		l.Read()
 	}
 }
