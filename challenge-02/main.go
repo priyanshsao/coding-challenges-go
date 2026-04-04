@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -12,67 +11,48 @@ const validTestFilePath = "./tests/step1/valid.json"
 const invalidTestFilePath = "./tests/step1/invalid.json"
 
 func main() {
+
 	validTestFile, err := os.Open(validTestFilePath)
 	if err != nil {
-		log.Fatal("(Error): ", err)
+		log.Println("[Error]: ", err)
+		os.Exit(2)
 	}
 	defer validTestFile.Close()
 
 	invalidTestFile, err := os.Open(invalidTestFilePath)
 	if err != nil {
-		log.Fatal("(Error): ", err)
+		log.Println("[Error]: ", err)
+		os.Exit(2)
 	}
 	defer invalidTestFile.Close()
 
-	fmt.Println("Running test for valid one")
-	code, err := Parser(validTestFile)
+	validTestData, err := io.ReadAll(validTestFile)
 	if err != nil {
-		fmt.Println(err)
+		log.Println("[Error]: ", err)
+		os.Exit(2)
 	}
 
-	if code == 0 {
-		fmt.Println("Success")
-	}
+	p := NewParser(validTestData)
 
-	fmt.Println("Running test for invalid one")
-	code, err = Parser(invalidTestFile)
+	output, err := p.Parse()
 	if err != nil {
-		fmt.Println(err)
+		log.Println("[Error/(step-1)]: ", err)
+	} else {
+		fmt.Println("[Step-1/(valid Json)]: ", output)
 	}
 
-	if code == 0 {
-		fmt.Println("Success")
-	}
-}
-
-func Parser(file *os.File) (int, error) {
-	stack := []byte{}
-	empty := true
-
-	data, err := io.ReadAll(file)
+	invalidTestData, err := io.ReadAll(invalidTestFile)
 	if err != nil {
-		log.Fatal("(Error): ", err)
+		log.Println("[Error]: ", err)
+		os.Exit(2)
 	}
 
-	for _, byte := range data {
-		switch byte {
-		case '{':
-			stack = append(stack, '{')
-			empty = false
-			continue
+	p2 := NewParser(invalidTestData)
 
-		case '}':
-			if len(stack) != 0 && stack[len(stack)-1] == '{' {
-				stack = stack[:len(stack)-1]
-				continue
-			}
-			return 1, errors.New("(Error)*: Parse failed")
-		}
+	output2, err := p2.Parse()
+	if err != nil {
+		log.Println("[Error]: ", err)
+	} else {
+		fmt.Println("[Step-1/(invalid json)]: ", output2)
 	}
-
-	if len(stack) == 0 && !empty {
-		return 0, nil
-	}
-
-	return 1, errors.New("(Error)*: Parse failed")
 }
