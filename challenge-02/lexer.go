@@ -8,7 +8,7 @@ type Lexer struct {
 	line     int
 }
 
-func New(input []byte) *Lexer {
+func NewLexer(input []byte) *Lexer {
 	l := &Lexer{input: input, line: 1}
 	l.Read()
 	return l
@@ -18,16 +18,17 @@ func (l *Lexer) Read() {
 	if l.next >= len(l.input) {
 		l.char = 0
 	} else {
-		l.char = l.input[l.position]
+		l.char = l.input[l.next]
 	}
 	l.position = l.next
 	l.next++
 }
 
-func (l *Lexer) ReadNext() byte {
+func (l *Lexer) LookNext() byte {
 	if l.next >= len(l.input) {
 		return 0
 	}
+
 	return l.input[l.next]
 }
 
