@@ -26,7 +26,7 @@ func (p *Parser) Move() {
 	p.nextToken = p.lexer.NextToken()
 }
 
-func (p *Parser) Parse() (interface{}, error) {
+func (p *Parser) Parse() (any, error) {
 	parsedObject, err := p.ParseToken()
 	if err != nil {
 		return nil, err
@@ -41,8 +41,8 @@ func (p *Parser) Parse() (interface{}, error) {
 	return parsedObject, nil
 }
 
-func (p *Parser) ParseToken() (interface{}, error) {
-	var parsedValue interface{}
+func (p *Parser) ParseToken() (any, error) {
+	var parsedValue any
 	var err error
 
 	switch p.currentToken.Type {
@@ -60,8 +60,8 @@ func (p *Parser) ParseToken() (interface{}, error) {
 	return parsedValue, nil
 }
 
-func (p *Parser) ParseObject() (interface{}, error) {
-	object := make(map[string]interface{})
+func (p *Parser) ParseObject() (any, error) {
+	object := make(map[string]any)
 
 	if p.nextToken.Type != EndObject {
 		return nil, fmt.Errorf("unexpected token %s after parsing object at line %d", p.currentToken.Literal, p.lexer.line)
