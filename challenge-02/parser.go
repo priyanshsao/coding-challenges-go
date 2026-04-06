@@ -45,7 +45,12 @@ func (p *Parser) ParseToken() (any, error) {
 	var parsedValue any
 	var err error
 
-	switch p.currentToken.Type {
+	token := p.currentToken
+	tokenType := p.currentToken.Type
+
+	switch tokenType {
+	case String:
+		parsedValue = token.Literal
 	case BeginObject:
 		parsedValue, err = p.ParseObject()
 		if err != nil {
@@ -63,8 +68,45 @@ func (p *Parser) ParseToken() (any, error) {
 func (p *Parser) ParseObject() (any, error) {
 	object := make(map[string]any)
 
-	if p.nextToken.Type != EndObject {
-		return nil, fmt.Errorf("unexpected token %s after parsing object at line %d", p.currentToken.Literal, p.lexer.line)
+	p.Move()
+
+	if p.currentToken.Type == EndObject {
+		return object, nil
+	}
+
+	for {
+		if p.currentToken.Type != String {
+			return nil, fmt.Errorf("unknown token %s at line %d expected key", p.currentToken.Literal, p.lexer.line)
+		}
+
+		key := p.currentToken.Literal
+
+		p.Move()
+
+		if p.currentToken.Type != NameSeparator {
+			return nil, fmt.Errorf("unknown token %s at line %d expected :", p.currentToken.Literal, p.lexer.line)
+		}
+
+		p.Move()
+
+		value, err := p.ParseToken()
+		if err != nil {
+			return nil, err
+		}
+
+		object[key] = value
+
+		p.Move()
+
+		if p.currentToken.Type != ValueSeparator {
+			break
+		}
+
+		p.Move()
+	}
+
+	if p.currentToken.Type != EndObject {
+		return nil, fmt.Errorf("unexpected token %s after parsing object at line %d expected }", p.currentToken.Literal, p.lexer.line)
 	}
 
 	p.Move()
