@@ -5,54 +5,64 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 )
 
-const validTestFilePath = "./tests/step1/valid.json"
-const invalidTestFilePath = "./tests/step1/invalid.json"
+type testFile struct {
+	name    string
+	step    int
+	isValid bool
+}
+
+var test = []testFile{
+	{name: "invalid", step: 1, isValid: false},
+	{name: "valid", step: 1, isValid: true},
+	{name: "invalid", step: 2, isValid: false},
+	{name: "invalid2", step: 2, isValid: false},
+	{name: "valid", step: 2, isValid: true},
+	{name: "valid2", step: 2, isValid: true},
+}
 
 func main() {
 
-	validTestFile, err := os.Open(validTestFilePath)
-	if err != nil {
-		log.Println("[Error]: ", err)
-		os.Exit(2)
+	for _, t := range test {
+		fmt.Printf("\n[step-%d](%s)(%s.json):\n", t.step, getCase(t.isValid), t.name)
+
+		fileData, err := getData("./tests/step" + strconv.Itoa(t.step) + "/" + t.name + ".json")
+		if err != nil {
+			log.Println("[Error]: ", err)
+			continue
+		}
+
+		p := NewParser(fileData)
+
+		out, err := p.Parse()
+		if err != nil {
+			log.Println("[Fail]: ", err)
+		} else {
+			fmt.Println("[Pass]: ", out)
+		}
 	}
-	defer validTestFile.Close()
+}
 
-	invalidTestFile, err := os.Open(invalidTestFilePath)
+func getData(path string) ([]byte, error) {
+	file, err := os.Open(path)
 	if err != nil {
-		log.Println("[Error]: ", err)
-		os.Exit(2)
+		return nil, err
 	}
-	defer invalidTestFile.Close()
+	defer file.Close()
 
-	validTestData, err := io.ReadAll(validTestFile)
+	fileData, err := io.ReadAll(file)
 	if err != nil {
-		log.Println("[Error]: ", err)
-		os.Exit(2)
-	}
-
-	p := NewParser(validTestData)
-
-	output, err := p.Parse()
-	if err != nil {
-		log.Println("[Error/(step-1)]: ", err)
-	} else {
-		fmt.Println("[Step-1/(valid Json)]: ", output)
-	}
-
-	invalidTestData, err := io.ReadAll(invalidTestFile)
-	if err != nil {
-		log.Println("[Error]: ", err)
-		os.Exit(2)
+		return nil, err
 	}
 
-	p2 := NewParser(invalidTestData)
+	return fileData, nil
+}
 
-	output2, err := p2.Parse()
-	if err != nil {
-		log.Println("[Error]: ", err)
-	} else {
-		fmt.Println("[Step-1/(invalid json)]: ", output2)
+func getCase(b bool) string {
+	if b {
+		return "valid case"
 	}
+	return "invalid case"
 }
