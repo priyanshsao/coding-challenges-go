@@ -108,11 +108,11 @@ func (l *Lexer) ReadNum() Token {
 func (l *Lexer) ReadLiteral() Token {
 	start := l.position
 
-	for isAlphabet(l.char) {
+	for isAlphabet(l.LookNext()) {
 		l.Read()
 	}
 
-	literal := tokenType(l.input[start:l.position])
+	literal := tokenType(l.input[start : l.position+1])
 
 	switch literal {
 	case True:
@@ -120,7 +120,7 @@ func (l *Lexer) ReadLiteral() Token {
 	case False:
 		return Token{False, "false"}
 	case Null:
-		return Token{Null, "null"}
+		return Token{Null, "nil"}
 	default:
 		return Token{Illegal, string(literal)}
 	}
@@ -145,4 +145,8 @@ func (l *Lexer) SkipWhiteSpace() {
 		}
 		l.Read()
 	}
+}
+
+func (l *Lexer) CurrentLine() int {
+	return l.line
 }
