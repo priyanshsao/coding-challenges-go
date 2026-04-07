@@ -146,3 +146,7 @@ func (l *Lexer) SkipWhiteSpace() {
 		l.Read()
 	}
 }
+
+func (l *Lexer) CurrentLine() int {
+	return l.line
+}
