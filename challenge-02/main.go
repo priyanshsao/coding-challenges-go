@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strconv"
 )
@@ -21,6 +20,8 @@ var test = []testFile{
 	{name: "invalid2", step: 2, isValid: false},
 	{name: "valid", step: 2, isValid: true},
 	{name: "valid2", step: 2, isValid: true},
+	{name: "invalid", step: 3, isValid: false},
+	{name: "valid", step: 3, isValid: true},
 }
 
 func main() {
@@ -30,7 +31,7 @@ func main() {
 
 		fileData, err := getData("./tests/step" + strconv.Itoa(t.step) + "/" + t.name + ".json")
 		if err != nil {
-			log.Println("[Error]: ", err)
+			fmt.Println("[Error]: ", err)
 			continue
 		}
 
@@ -38,7 +39,7 @@ func main() {
 
 		out, err := p.Parse()
 		if err != nil {
-			log.Println("[Fail]: ", err)
+			fmt.Println("[Fail]: ", err)
 		} else {
 			fmt.Println("[Pass]: ", out)
 		}
