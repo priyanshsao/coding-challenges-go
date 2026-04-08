@@ -22,6 +22,9 @@ var test = []testFile{
 	{name: "valid2", step: 2, isValid: true},
 	{name: "invalid", step: 3, isValid: false},
 	{name: "valid", step: 3, isValid: true},
+	{name: "invalid", step: 4, isValid: false},
+	{name: "valid", step: 4, isValid: true},
+	{name: "valid2", step: 4, isValid: true},
 }
 
 func main() {

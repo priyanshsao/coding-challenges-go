@@ -16,8 +16,8 @@ func NewParser(input []byte) *Parser {
 	lexer := NewLexer(input)
 
 	parser.lexer = lexer
-	parser.currentToken = lexer.NextToken()
 	parser.nextToken = lexer.NextToken()
+	parser.Move()
 
 	return parser
 }
@@ -65,6 +65,11 @@ func (p *Parser) ParseToken() (any, error) {
 		parsedValue = token.Literal
 	case BeginObject:
 		parsedValue, err = p.ParseObject()
+		if err != nil {
+			return nil, err
+		}
+	case BeginArray:
+		parsedValue, err = p.ParseArray()
 		if err != nil {
 			return nil, err
 		}
@@ -124,4 +129,37 @@ func (p *Parser) ParseObject() (any, error) {
 	}
 
 	return object, nil
+}
+
+func (p *Parser) ParseArray() (any, error) {
+	var array []any
+
+	p.Move()
+
+	if p.currentToken.Type == EndArray {
+		return array, nil
+	}
+
+	for {
+		parsedValue, err := p.ParseToken()
+		if err != nil {
+			return nil, err
+		}
+
+		array = append(array, parsedValue)
+
+		p.Move()
+
+		if p.currentToken.Type != ValueSeparator {
+			break
+		}
+
+		p.Move()
+	}
+
+	if p.currentToken.Type != EndArray {
+		return nil, fmt.Errorf("unexpected token %s after parsing array at line %d expected ]", p.currentToken.Literal, p.lexer.CurrentLine())
+	}
+
+	return array, nil
 }
