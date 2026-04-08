@@ -87,22 +87,18 @@ func (l *Lexer) ReadString() Token {
 func (l *Lexer) ReadNum() Token {
 	start := l.position
 
-	if l.char == '-' {
+	for isDigit(l.LookNext()) {
 		l.Read()
 	}
 
-	for isDigit(l.char) {
+	if l.LookNext() == '.' {
 		l.Read()
-	}
-
-	if l.char == '.' {
-		l.Read()
-		for isDigit(l.char) {
+		for isDigit(l.LookNext()) {
 			l.Read()
 		}
 	}
 
-	return Token{Number, string(l.input[start:l.position])}
+	return Token{Number, string(l.input[start : l.position+1])}
 }
 
 func (l *Lexer) ReadLiteral() Token {
