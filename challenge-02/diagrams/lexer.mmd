@@ -1,51 +1,51 @@
 flowchart TD
 
     %% base structure
-    root["NextToken()"] --> sws("SkipWhiteSpace()") --> case{case}
+    root["NextToken()"] --> sws["SkipWhiteSpace()"] --> case{case}
 
     %% Characters
-    bo(("{"))
-    eo(("}"))
-    ba(("[")) 
-    ea(("]"))
-    ns((":"))
-    vs((","))
+    bo["{"]
+    eo["}"]
+    ba["["]
+    ea["]"]
+    ns[":"]
+    vs[","]
+    str["string"]
+    eof["EOF (0)"]
+    df["default"]
+    dgom["digit or -"]
+    lit["literal"]
+
+    %% Functions
+    rn["ReadNum()"]
+    rl["ReadLiteral()"]
+    rs["ReadString()"]
 
     %% Return values
-    subgraph Rt1["Token"]
-        t1["type: BeginObject"]
-        l1["literal: {"]
-    end
-
-    subgraph Rt2["Token"]
-        t2["type: EndObject"]
-        l2["literal: }"]
-    end
-
-    subgraph Rt3["Token"]
-        t3["type: BeginArray"]
-        l3["literal: ["]
-    end
-
-    subgraph Rt4["Token"]
-        t4["type: EndArray"]
-        l4["literal: ]"]
-    end
-
-    subgraph Rt5["Token"]
-        t5["type: NameSeparator"]
-        l5["literal: :"]
-    end
-
-    subgraph Rt6["Token"]
-        t6["type: ValueSeparator"]
-        l6["literal: ,"]
-    end
+    t_bo["BeginObject Token"]
+    t_eo["EndObject Token"]
+    t_ba["BeginArray Token"]
+    t_ea["EndArray Token"]
+    t_ns["NameSeparator Token"]
+    t_vs["ValueSeparator Token"]
+    t_str["String Token"]
+    t_num["Number Token"]
+    t_lit["True/False/Null Token"]
+    t_eof["EOF"]
+    t_illegal["Illegal Token"]
 
     %% Flow
-    case --> bo --> Rt1
-    case --> eo --> Rt2
-    case --> ba --> Rt3
-    case --> ea --> Rt4
-    case --> ns --> Rt5
-    case --> vs --> Rt6
+    case --> bo --> t_bo
+    case --> eo --> t_eo
+    case --> ba --> t_ba
+    case --> ea --> t_ea
+    case --> str --> rs --> t_str
+    case --> ns --> t_ns
+    case --> vs --> t_vs
+    case --> eof --> t_eof
+
+    case --> df --> cond{if}
+
+    cond --> dgom --> rn --> t_num
+    cond --> lit --> rl --> t_lit
+    cond -->|"else"| t_illegal
