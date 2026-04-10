@@ -1,0 +1,24 @@
+flowchart TD
+
+    %% Base Structure
+    root["Parse()"] --> pt["ParseToken()"] --> |"Move()"| cond{if} --> |equals to EOF| R1[Return parsed object]
+
+    %% Functions
+    f_po["ParseObject()"]
+    f_pa["ParseArray()"]
+    
+    pt --> case{"case(current token)"}
+
+    case --> |LITERAL| R2["return true/false/nil"]
+    case --> |NUMBER| R3["return float(token.literal)"]
+    case --> |STRING| R4["return token.literal"]
+    case --> |BEGIN_OBJECT| f_po
+    case --> |BEGIN_ARRAY| f_pa
+    case --> |EOF| R5["return error"]
+    case --> |ILLEGAL| R8["return error"]
+    case --> |DEFAULT| R9["return error"]
+
+    f_po --> |"find value of token"| pt
+    f_po --> |"found EOF"| R6["return object"]
+    f_pa --> |"find value of token"| pt
+    f_pa --> |"found EOF"| R7["return array"]
