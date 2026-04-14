@@ -93,6 +93,9 @@ func (l *Lexer) ReadNum() Token {
 
 	if l.LookNext() == '.' {
 		l.Read()
+		if !isDigit(l.LookNext()) {
+			return Token{Illegal, string(l.input[start : l.position+1])}
+		}
 		for isDigit(l.LookNext()) {
 			l.Read()
 		}
