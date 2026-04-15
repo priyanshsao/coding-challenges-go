@@ -36,7 +36,7 @@ func (p *Parser) Parse() (any, error) {
 	p.Move()
 
 	if p.currentToken.Type != EOF {
-		return nil, fmt.Errorf("expected end of file, got %s at line %d", p.currentToken.Literal, p.lexer.CurrentLine())
+		return nil, fmt.Errorf("%w '%s' at line %d, expected %v", ErrUnknownToken, p.currentToken.Literal, p.lexer.CurrentLine(), EOF)
 	}
 
 	return parsedObject, nil
@@ -74,11 +74,11 @@ func (p *Parser) ParseToken() (any, error) {
 			return nil, err
 		}
 	case EOF:
-		return nil, fmt.Errorf("unexpected end of input at line %d", p.lexer.CurrentLine())
+		return nil, fmt.Errorf("%w at line %d", ErrUnexpectedEOF, p.lexer.CurrentLine())
 	case Illegal:
-		return nil, fmt.Errorf("Illegal token %s found at line %d", token.Literal, p.lexer.CurrentLine())
+		return nil, fmt.Errorf("%w '%s' at line %d", ErrIllegalToken, token.Literal, p.lexer.CurrentLine())
 	default:
-		return nil, fmt.Errorf("unknown token %s at line %d", p.currentToken.Literal, p.lexer.CurrentLine())
+		return nil, fmt.Errorf("%w '%s' at line %d", ErrUnknownToken, p.currentToken.Literal, p.lexer.CurrentLine())
 	}
 
 	return parsedValue, nil
@@ -95,7 +95,7 @@ func (p *Parser) ParseObject() (any, error) {
 
 	for {
 		if p.currentToken.Type != String {
-			return nil, fmt.Errorf("unknown token %s at line %d expected key", p.currentToken.Literal, p.lexer.CurrentLine())
+			return nil, fmt.Errorf("%w '%s' at line %d, expected key", ErrUnknownToken, p.currentToken.Literal, p.lexer.CurrentLine())
 		}
 
 		key := p.currentToken.Literal
@@ -103,7 +103,7 @@ func (p *Parser) ParseObject() (any, error) {
 		p.Move()
 
 		if p.currentToken.Type != NameSeparator {
-			return nil, fmt.Errorf("unknown token %s at line %d expected :", p.currentToken.Literal, p.lexer.CurrentLine())
+			return nil, fmt.Errorf("%w %s at line %d, expected %v", ErrUnknownToken, p.currentToken.Literal, p.lexer.CurrentLine(), NameSeparator)
 		}
 
 		p.Move()
@@ -125,7 +125,7 @@ func (p *Parser) ParseObject() (any, error) {
 	}
 
 	if p.currentToken.Type != EndObject {
-		return nil, fmt.Errorf("unexpected token %s after parsing object at line %d expected }", p.currentToken.Literal, p.lexer.CurrentLine())
+		return nil, fmt.Errorf("%w '%s' at line %d, expected %v", ErrUnknownToken, p.currentToken.Literal, p.lexer.CurrentLine(), EndObject)
 	}
 
 	return object, nil
@@ -158,7 +158,7 @@ func (p *Parser) ParseArray() (any, error) {
 	}
 
 	if p.currentToken.Type != EndArray {
-		return nil, fmt.Errorf("unexpected token %s after parsing array at line %d expected ]", p.currentToken.Literal, p.lexer.CurrentLine())
+		return nil, fmt.Errorf("%w %s at line %d, expected %v", ErrUnknownToken, p.currentToken.Literal, p.lexer.CurrentLine(), EndArray)
 	}
 
 	return array, nil
