@@ -116,6 +116,47 @@ func Test_LookNext(t *testing.T) {
 	}
 }
 
+func Test_NextToken(t *testing.T) {
+	type test struct {
+		name     string
+		input    string
+		expected []Token
+	}
+
+	tests := []test{
+		{
+			name:  "Should return exact tokens for all base case",
+			input: `[]{}:,"HelLo"12trueF`,
+			expected: []Token{
+				{BeginArray, "["},
+				{EndArray, "]"},
+				{BeginObject, "{"},
+				{EndObject, "}"},
+				{NameSeparator, ":"},
+				{ValueSeparator, ","},
+				{String, "HelLo"},
+				{Number, "12"},
+				{True, "true"},
+				{Illegal, "F"},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := NewLexer([]byte(tt.input))
+
+			for i := 0; i < len(tt.expected); i++ {
+				token := l.NextToken()
+
+				if !reflect.DeepEqual(token, tt.expected[i]) {
+					t.Errorf("expected '%v' but got '%v'", tt.expected[i], token)
+				}
+			}
+		})
+	}
+}
+
 func Test_ReadString(t *testing.T) {
 	type test struct {
 		name     string
@@ -237,13 +278,75 @@ func Test_ReadNum(t *testing.T) {
 
 			prevPos := l.position
 			numToken := l.NextToken()
-			expectedPos := len(numToken.Literal)
+			posIncreaseFactor := len(tt.expected.Literal)
+			expectedPos := prevPos + posIncreaseFactor
 
 			if !reflect.DeepEqual(numToken, tt.expected) {
 				t.Errorf("expected %v but got %v", tt.expected, numToken)
 			}
-			if l.position != prevPos+expectedPos {
-				t.Errorf("expected position to be at %v but got %v", expectedPos, l.position)
+			if l.position != expectedPos {
+				t.Errorf("expected position to be at index %v but got %v", expectedPos, l.position)
+			}
+		})
+	}
+}
+
+func Test_ReadLiteral(t *testing.T) {
+	type test struct {
+		name     string
+		input    string
+		expected Token
+	}
+
+	tests := []test{
+		{
+			name:  "Should return token for simple literal",
+			input: "true",
+			expected: Token{
+				True,
+				"true",
+			},
+		},
+		{
+			name:  "Should return illegal token for capitalized literal",
+			input: "TRUE",
+			expected: Token{
+				Illegal,
+				"T",
+			},
+		},
+		{
+			name:  "Should return illegal token for mix cased literal",
+			input: "tRUE",
+			expected: Token{
+				Illegal,
+				"t",
+			},
+		},
+		{
+			name:  "Should return illegal token for wrong literal",
+			input: "tru",
+			expected: Token{
+				Illegal,
+				"tru",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			l := NewLexer([]byte(tt.input))
+
+			prevPos := l.position
+			token := l.NextToken()
+			posIncreaseFactor := len(tt.expected.Literal)
+			expectedPos := prevPos + posIncreaseFactor
+
+			if !reflect.DeepEqual(token, tt.expected) {
+				t.Errorf("expected %v but got %v", tt.expected, token)
+			}
+			if l.position != expectedPos {
+				t.Errorf("expected position to be at index %v but got %v", expectedPos, l.position)
 			}
 		})
 	}
