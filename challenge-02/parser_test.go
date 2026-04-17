@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"reflect"
 	"testing"
 )
 
@@ -81,6 +83,91 @@ func Test_Move(t *testing.T) {
 
 			if p.currentToken != tt.expected.currentToken {
 				t.Errorf("expected '%s'(%s) but got '%s'(%s)", tt.expected.currentToken.Literal, tt.expected.currentToken.Type.String(), p.currentToken.Literal, p.currentToken.Type.String())
+			}
+		})
+	}
+}
+
+func Test_ParseObject(t *testing.T) {
+
+	type test struct {
+		name        string
+		input       string
+		expected    map[string]any
+		expectedErr error
+	}
+
+	tests := []test{
+		{
+			name:  "Should return object for simple input",
+			input: `{"key":true}`,
+			expected: map[string]any{
+				"key": true,
+			},
+		},
+		{
+			name:        "Should return error for input without key",
+			input:       "{:true}",
+			expectedErr: ErrUnknownToken,
+		},
+	}
+
+	for _, tt := range tests {
+
+		t.Run(tt.name, func(t *testing.T) {
+
+			p := NewParser([]byte(tt.input))
+			actualObject, err := p.ParseToken()
+			if err != nil {
+				if tt.expectedErr != nil {
+					if !errors.Is(err, tt.expectedErr) {
+						t.Fatalf("expected %v but got %v", tt.expectedErr, err)
+					}
+					return
+				}
+				t.Fatal(err)
+			}
+
+			if !reflect.DeepEqual(actualObject, tt.expected) {
+				t.Errorf("expected %v but got %v", tt.expected, actualObject)
+			}
+
+		})
+	}
+}
+
+func Test_ParseArray(t *testing.T) {
+
+	type test struct {
+		name        string
+		input       string
+		expected    []any
+		expectedErr error
+	}
+
+	tests := []test{
+		{
+			name:     "Should return array for simple input",
+			input:    `[1,2,"Hi"]`,
+			expected: []any{1.0, 2.0, "Hi"},
+		},
+	}
+
+	for _, tt := range tests {
+
+		t.Run(tt.name, func(t *testing.T) {
+
+			p := NewParser([]byte(tt.input))
+			actualArr, err := p.ParseToken()
+			if err != nil {
+				if tt.expectedErr != nil && !errors.Is(err, tt.expectedErr) {
+					t.Fatalf("expected %v but got %v", tt.expectedErr, err)
+				}
+				return
+			}
+
+			if !reflect.DeepEqual(actualArr, tt.expected) {
+				t.Errorf("expected %v but got %v", tt.expected, actualArr)
 			}
 		})
 	}
