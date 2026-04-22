@@ -7,33 +7,39 @@ import (
 	"io"
 	"log"
 	"os"
-	"unicode"
 	"unicode/utf8"
 )
 
 type FileInfo struct {
+	// count of bytes
 	Bytes int
+	// count of lines
 	Lines int
+	// count of words
 	Words int
+	// count of utf-8 chars
 	Runes int
 }
 
 func main() {
+	// variables to store flag value
 	var getBytes bool
 	var getLines bool
 	var getWords bool
 	var getRunes bool
 
-	myFile := &FileInfo{}
+	myFile := new(FileInfo)
 
+	// define flags
 	flag.BoolVar(&getBytes, "c", false, "print total bytes")
 	flag.BoolVar(&getLines, "l", false, "print total lines")
 	flag.BoolVar(&getWords, "w", false, "print total words")
 	flag.BoolVar(&getRunes, "m", false, "print total bytes(according to utf-8 encoding)")
 
+	// parses the flags and fills the variables,
+	// Should be called before flags are accessed
+	// by program
 	flag.Parse()
-
-	filePath := flag.CommandLine.Arg(0)
 
 	inStatus, err := os.Stdin.Stat()
 	if err != nil {
@@ -45,14 +51,23 @@ func main() {
 	if (inStatus.Mode() & os.ModeCharDevice) == 0 {
 		file = os.Stdin
 	} else {
-		file, err = os.Open(filePath)
-		if err != nil {
-			log.Println("(error): ", err)
+
+		// get the first non-flag arg,
+		// generally a file path
+		filePath := flag.CommandLine.Arg(0)
+
+		// empty check path = ""
+		if len(filePath) != 0 {
+			file, err = os.Open(filePath)
+			if err != nil {
+				log.Println("(error): ", err)
+			}
+			defer file.Close()
 		}
-		defer file.Close()
+		log.Fatal("(error): empty file path")
 	}
 
-	buffer := make([]byte, 32*1024)
+	buffer := make([]byte, 32*1024) //32kB
 	leftOver := []byte{}
 	inWord := false
 
@@ -101,12 +116,13 @@ func processBytes(buffer []byte, file *FileInfo) {
 }
 
 func processLines(buffer []byte, file *FileInfo) {
+	// counts \n in buffer
 	file.Lines += bytes.Count(buffer, []byte{'\n'})
 }
 
 func processWords(buffer []byte, file *FileInfo, inWord *bool) {
 	for _, b := range buffer {
-		if unicode.IsSpace(rune(b)) {
+		if isSpace(b) {
 			*inWord = false
 		} else {
 			if !*inWord {
@@ -128,10 +144,16 @@ func processRunes(buffer []byte, file *FileInfo, leftOver *[]byte) {
 			*leftOver = append(*leftOver, buffer[i:]...)
 			break
 		}
-		// need to add error check for utf8.RuneError
+		// no need to err check
+		// as we are sure there is atleast 1 rune ahed
 		_, size := utf8.DecodeRune(buffer[i:])
 
 		file.Runes++
 		i += size
 	}
+}
+
+func isSpace(b byte) bool {
+	// simple ASCII check
+	return b == ' ' || b == '\n' || b == '\t' || b == '\r'
 }
