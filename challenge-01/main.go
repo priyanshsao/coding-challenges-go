@@ -2,12 +2,13 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"flag"
-	"fmt"
 	"io"
-	"log"
 	"os"
 	"unicode/utf8"
+
+	"github.com/sirupsen/logrus"
 )
 
 type FileInfo struct {
@@ -22,6 +23,9 @@ type FileInfo struct {
 }
 
 func main() {
+	// setup logger
+	formatLogs()
+
 	// variables to store flag value
 	var getBytes bool
 	var getLines bool
@@ -43,10 +47,11 @@ func main() {
 
 	inStatus, err := os.Stdin.Stat()
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 
 	var file *os.File
+	// var result []int
 
 	if (inStatus.Mode() & os.ModeCharDevice) == 0 {
 		file = os.Stdin
@@ -60,11 +65,12 @@ func main() {
 		if len(filePath) != 0 {
 			file, err = os.Open(filePath)
 			if err != nil {
-				log.Println("(error): ", err)
+				logrus.Fatal(err)
 			}
 			defer file.Close()
+		} else {
+			logrus.Fatal(errors.New("empty file path"))
 		}
-		log.Fatal("(error): empty file path")
 	}
 
 	buffer := make([]byte, 32*1024) //32kB
@@ -77,7 +83,7 @@ func main() {
 			if err == io.EOF {
 				break
 			}
-			fmt.Println("(error): ", err)
+			logrus.Fatal(err)
 		}
 
 		if getBytes {
@@ -95,16 +101,16 @@ func main() {
 	}
 
 	if getBytes {
-		fmt.Print(myFile.Bytes, " ")
+		logrus.Info(myFile.Bytes)
 	}
 	if getLines {
-		fmt.Print(myFile.Lines, " ")
+		logrus.Info(myFile.Lines)
 	}
 	if getWords {
-		fmt.Print(myFile.Words, " ")
+		logrus.Info(myFile.Words)
 	}
 	if getRunes {
-		fmt.Print(myFile.Runes, " ")
+		logrus.Info(myFile.Runes)
 	}
 }
 
@@ -156,4 +162,14 @@ func processRunes(buffer []byte, file *FileInfo, leftOver *[]byte) {
 func isSpace(b byte) bool {
 	// simple ASCII check
 	return b == ' ' || b == '\n' || b == '\t' || b == '\r'
+}
+
+func formatLogs() {
+
+	// remove unwanted things and enforce colors
+	logrus.SetFormatter(&logrus.TextFormatter{
+		DisableTimestamp: true,
+		ForceColors:      true,
+		PadLevelText:     true,
+	})
 }
