@@ -53,6 +53,14 @@ func main() {
 	// by program
 	flag.Parse()
 
+	// set defaults if no flag provided
+	if flag.NFlag() == 0 {
+		logrus.Info("No flags provided, using defaults...")
+		getBytes = true
+		getLines = true
+		getWords = true
+	}
+
 	inStatus, err := os.Stdin.Stat()
 	if err != nil {
 		logrus.Fatal(err)
