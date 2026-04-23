@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"flag"
+	"fmt"
 	"io"
 	"os"
 	"unicode/utf8"
@@ -40,10 +41,26 @@ func main() {
 	flag.BoolVar(&getWords, "w", false, "print total words")
 	flag.BoolVar(&getRunes, "m", false, "print total bytes(according to utf-8 encoding)")
 
+	// add custom usage
+	flag.Usage = func() {
+		fmt.Print("\nUsage: ccwc <flag> <file_name>\n")
+		fmt.Print("\nDefault flags: -c -w -l\n")
+		fmt.Print("\nFlags:\n")
+		flag.PrintDefaults()
+	}
+
 	// parses the flags and fills the variables,
 	// Should be called before flags are accessed
 	// by program
 	flag.Parse()
+
+	// set defaults if no flag provided
+	if flag.NFlag() == 0 {
+		logrus.Info("No flags provided, using defaults...")
+		getBytes = true
+		getLines = true
+		getWords = true
+	}
 
 	inStatus, err := os.Stdin.Stat()
 	if err != nil {
@@ -56,6 +73,11 @@ func main() {
 	if (inStatus.Mode() & os.ModeCharDevice) == 0 {
 		file = os.Stdin
 	} else {
+
+		// stop if no non-flag args
+		if flag.NArg() == 0 {
+			logrus.Fatal(errors.New("need a file to process on"))
+		}
 
 		// get the first non-flag arg,
 		// generally a file path
@@ -101,16 +123,16 @@ func main() {
 	}
 
 	if getBytes {
-		logrus.Info(myFile.Bytes)
+		logrus.Println(myFile.Bytes)
 	}
 	if getLines {
-		logrus.Info(myFile.Lines)
+		logrus.Println(myFile.Lines)
 	}
 	if getWords {
-		logrus.Info(myFile.Words)
+		logrus.Println(myFile.Words)
 	}
 	if getRunes {
-		logrus.Info(myFile.Runes)
+		logrus.Println(myFile.Runes)
 	}
 }
 
