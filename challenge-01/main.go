@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"flag"
+	"fmt"
 	"io"
 	"os"
 	"unicode/utf8"
@@ -73,6 +74,11 @@ func main() {
 		file = os.Stdin
 	} else {
 
+		// stop if no non-flag args
+		if flag.NArg() == 0 {
+			logrus.Fatal(errors.New("need a file to process on"))
+		}
+
 		// get the first non-flag arg,
 		// generally a file path
 		filePath := flag.CommandLine.Arg(0)
@@ -117,16 +123,16 @@ func main() {
 	}
 
 	if getBytes {
-		logrus.Info(myFile.Bytes)
+		logrus.Println(myFile.Bytes)
 	}
 	if getLines {
-		logrus.Info(myFile.Lines)
+		logrus.Println(myFile.Lines)
 	}
 	if getWords {
-		logrus.Info(myFile.Words)
+		logrus.Println(myFile.Words)
 	}
 	if getRunes {
-		logrus.Info(myFile.Runes)
+		logrus.Println(myFile.Runes)
 	}
 }
 
