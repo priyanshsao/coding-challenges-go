@@ -40,6 +40,14 @@ func main() {
 	flag.BoolVar(&getWords, "w", false, "print total words")
 	flag.BoolVar(&getRunes, "m", false, "print total bytes(according to utf-8 encoding)")
 
+	// add custom usage
+	flag.Usage = func() {
+		fmt.Print("\nUsage: ccwc <flag> <file_name>\n")
+		fmt.Print("\nDefault flags: -c -w -l\n")
+		fmt.Print("\nFlags:\n")
+		flag.PrintDefaults()
+	}
+
 	// parses the flags and fills the variables,
 	// Should be called before flags are accessed
 	// by program
