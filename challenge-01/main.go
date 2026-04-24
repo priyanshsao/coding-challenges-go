@@ -2,11 +2,11 @@ package main
 
 import (
 	"bytes"
-	"errors"
 	"flag"
 	"fmt"
 	"io"
 	"os"
+	"strings"
 	"unicode/utf8"
 
 	"github.com/sirupsen/logrus"
@@ -43,10 +43,11 @@ func main() {
 
 	// add custom usage
 	flag.Usage = func() {
-		fmt.Print("\nUsage: ccwc <flag> <file_name>\n")
+		fmt.Print("\nUsage: ccwc <flag> <file_path>\n")
 		fmt.Print("\nDefault flags: -c -w -l\n")
 		fmt.Print("\nFlags:\n")
 		flag.PrintDefaults()
+		fmt.Println()
 	}
 
 	// parses the flags and fills the variables,
@@ -68,30 +69,33 @@ func main() {
 	}
 
 	var file *os.File
-	// var result []int
 
 	if (inStatus.Mode() & os.ModeCharDevice) == 0 {
 		file = os.Stdin
 	} else {
 
-		// stop if no non-flag args
+		// stop if no args
 		if flag.NArg() == 0 {
-			logrus.Fatal(errors.New("need a file to process on"))
+			logrus.Errorln("No argument provided")
+			flag.Usage()
+			os.Exit(1)
 		}
 
-		// get the first non-flag arg,
-		// generally a file path
+		// get the first arg,
+		// should be a file path
 		filePath := flag.CommandLine.Arg(0)
+		// trim unwanted space
+		trimmedFPath := strings.TrimSpace(filePath)
 
-		// empty check path = ""
-		if len(filePath) != 0 {
+		// empty check
+		if trimmedFPath != "" {
 			file, err = os.Open(filePath)
 			if err != nil {
 				logrus.Fatal(err)
 			}
 			defer file.Close()
 		} else {
-			logrus.Fatal(errors.New("empty file path"))
+			logrus.Fatal("invalid argument: empty file path.")
 		}
 	}
 
