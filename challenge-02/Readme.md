@@ -114,4 +114,4 @@ start coverage.html
 
 ## License
 
-Licensed under [MIT](LICENSE).
+Licensed under [MIT](https://github.com/priyanshsao/coding-challenges-go/blob/main/LICENSE).
