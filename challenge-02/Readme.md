@@ -71,7 +71,7 @@ map[string]any{
 
 ## Setup
 
-#### Prerequisites
+### Prerequisites
 
 - [Go](https://go.dev/doc/install) 1.23 or later
 
