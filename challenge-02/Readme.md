@@ -1,5 +1,7 @@
 # JSON Parser using Go
 
+A JSON parser built from scratch in Go. Parses and validates JSON strings following the [JSON spec](https://www.json.org/json-en.html).
+
 ## Documentation
 
 - [**Overview**](#overview)
