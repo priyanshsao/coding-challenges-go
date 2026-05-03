@@ -19,7 +19,7 @@ type FileInfo struct {
 	Lines int
 	// count of words
 	Words int
-	// count of utf-8 chars
+	// count of unicode chars
 	Runes int
 }
 

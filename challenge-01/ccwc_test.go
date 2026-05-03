@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func Test_ProcessBytes(t *testing.T) {
 
@@ -130,6 +133,76 @@ func Test_ProcessWords(t *testing.T) {
 
 			if file.Words != tt.expected {
 				t.Errorf("expected %v but got this %v", tt.expected, file.Words)
+			}
+		})
+	}
+}
+
+func Test_ProcessRunes(t *testing.T) {
+	
+	r := []byte("😍")
+
+	// This is an invalid utf-8 character
+	invalidUTF8 := []byte{0xFF}
+
+	type step struct {
+		input []byte
+		leftOver []byte
+	}
+
+	tests := []struct {
+		name             string
+		steps			 []step
+		expected         int
+	}{
+		{
+			name: "incomplete rune",
+			steps: []step{
+				{input: r[:2], leftOver: r[:2]},
+				{input: r[2:], leftOver: []byte{}},
+			}, 
+			expected: 1,
+		},
+		{
+			name: "ascii characters",
+			steps: []step{
+				{input: []byte("abcd"), leftOver: nil},
+			}, 
+			expected: 4,
+		},
+		{
+			name: "incomplete end",
+			steps: []step{
+				{input: r[:2], leftOver: r[:2]},
+			}, 
+			expected: 0,
+		},
+		{
+			name: "invalid utf-8",
+			steps: []step{
+				{input: invalidUTF8, leftOver: nil},
+			}, 
+			expected: 1,
+		},
+	}
+
+	for _, tt := range tests {
+
+		t.Run(tt.name, func(t *testing.T) {
+			var leftOver []byte
+			file := new(FileInfo)
+
+			for _, s := range tt.steps {
+
+				processRunes(s.input, file, &leftOver)
+
+				if !reflect.DeepEqual(leftOver, s.leftOver) {
+					t.Errorf("expected %v but got %v", s.leftOver, leftOver)
+				}
+			}
+
+			if file.Runes != tt.expected {
+				t.Errorf("expected %v but got %v", tt.expected, file.Runes)
 			}
 		})
 	}
