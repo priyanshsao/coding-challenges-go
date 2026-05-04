@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"flag"
-	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -27,40 +26,11 @@ func main() {
 	// setup logger
 	formatLogs()
 
-	// variables to store flag value
-	var getBytes bool
-	var getLines bool
-	var getWords bool
-	var getRunes bool
-
 	myFile := new(FileInfo)
+	opts := new(Opts)
 
-	// define flags
-	flag.BoolVar(&getBytes, "c", false, "print total bytes")
-	flag.BoolVar(&getLines, "l", false, "print total lines")
-	flag.BoolVar(&getWords, "w", false, "print total words")
-	flag.BoolVar(&getRunes, "m", false, "print total bytes(according to utf-8 encoding)")
-
-	// add custom usage
-	flag.Usage = func() {
-		fmt.Print("\nUsage: ccwc <flag> <file_path>\n")
-		fmt.Print("\nDefault flags: -c -w -l\n")
-		fmt.Print("\nFlags:\n")
-		flag.PrintDefaults()
-		fmt.Println()
-	}
-
-	// parses the flags and fills the variables,
-	// Should be called before flags are accessed
-	// by program
-	flag.Parse()
-
-	// set defaults if no flag provided
-	if flag.NFlag() == 0 {
-		logrus.Info("No flags provided, using defaults...")
-		getBytes = true
-		getLines = true
-		getWords = true
+	if RegisterAndParse(opts); NoFlags() {
+		SetDefaults(opts)
 	}
 
 	inStatus, err := os.Stdin.Stat()
@@ -112,30 +82,30 @@ func main() {
 			logrus.Fatal(err)
 		}
 
-		if getBytes {
+		if opts.getByte {
 			processBytes(buffer[:n], myFile)
 		}
-		if getLines {
+		if opts.getLine {
 			processLines(buffer[:n], myFile)
 		}
-		if getWords {
+		if opts.getWord {
 			processWords(buffer[:n], myFile, &inWord)
 		}
-		if getRunes {
+		if opts.getRune {
 			processRunes(buffer[:n], myFile, &leftOver)
 		}
 	}
 
-	if getBytes {
+	if opts.getByte {
 		logrus.Println(myFile.Bytes)
 	}
-	if getLines {
+	if opts.getLine {
 		logrus.Println(myFile.Lines)
 	}
-	if getWords {
+	if opts.getWord {
 		logrus.Println(myFile.Words)
 	}
-	if getRunes {
+	if opts.getRune {
 		logrus.Println(myFile.Runes)
 	}
 }
