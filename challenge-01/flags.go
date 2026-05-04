@@ -19,8 +19,19 @@ type Opts struct {
 	getRune bool
 }
 
-// NoFlags checks list of flags,
-// returns true if list is empty.
+// PrintUsage prints usage instructions.
+func PrintUsage() {
+
+	flag.Usage()
+}
+
+// NoArgs returns true, if no arguments provided.
+func NoArgs() bool {
+
+	return flag.NArg() == 0
+}
+
+// NoFlags checks list of flags, returns true if list is empty.
 func NoFlags() bool {
 
 	return flag.NFlag() == 0
@@ -37,7 +48,7 @@ func SetDefaults(opts *Opts) {
 
 func RegisterAndParse(opts *Opts) {
 
-	// Register 
+	// Register
 	flag.BoolVar(&opts.getByte, "c", false, "print total bytes")
 	flag.BoolVar(&opts.getLine, "l", false, "print total lines")
 	flag.BoolVar(&opts.getWord, "w", false, "print total words")
