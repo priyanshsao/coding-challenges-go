@@ -139,49 +139,49 @@ func Test_ProcessWords(t *testing.T) {
 }
 
 func Test_ProcessRunes(t *testing.T) {
-	
+
 	r := []byte("😍")
 
 	// This is an invalid utf-8 character
 	invalidUTF8 := []byte{0xFF}
 
 	type step struct {
-		input []byte
+		input    []byte
 		leftOver []byte
 	}
 
 	tests := []struct {
-		name             string
-		steps			 []step
-		expected         int
+		name     string
+		steps    []step
+		expected int
 	}{
 		{
 			name: "incomplete rune",
 			steps: []step{
 				{input: r[:2], leftOver: r[:2]},
 				{input: r[2:], leftOver: []byte{}},
-			}, 
+			},
 			expected: 1,
 		},
 		{
 			name: "ascii characters",
 			steps: []step{
 				{input: []byte("abcd"), leftOver: nil},
-			}, 
+			},
 			expected: 4,
 		},
 		{
 			name: "incomplete end",
 			steps: []step{
 				{input: r[:2], leftOver: r[:2]},
-			}, 
+			},
 			expected: 0,
 		},
 		{
 			name: "invalid utf-8",
 			steps: []step{
 				{input: invalidUTF8, leftOver: nil},
-			}, 
+			},
 			expected: 1,
 		},
 	}
