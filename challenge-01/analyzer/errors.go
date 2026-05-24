@@ -1,6 +1,4 @@
-// Handles error related work
-
-package main
+package analyzer
 
 import "errors"
 
