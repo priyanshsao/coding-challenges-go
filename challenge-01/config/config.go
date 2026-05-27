@@ -8,7 +8,7 @@ type FileOpts int
 type Opts map[FileOpts]bool
 
 // Result stores the computed values for each option.
-type Result map[string]int
+type Result map[FileOpts]int
 
 const (
 	// BYTES represents the byte count operation.

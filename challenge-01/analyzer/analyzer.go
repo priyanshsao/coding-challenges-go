@@ -49,13 +49,13 @@ func Process(config *stdconfig.Config) error {
 func processBytes(buffer []byte, result *stdconfig.Result) {
 
 	if len(buffer) > 0 {
-		(*result)[stdconfig.BYTES.String()] += len(buffer)
+		(*result)[stdconfig.BYTES] += len(buffer)
 	}
 }
 
 func processLines(buffer []byte, result *stdconfig.Result) {
 
-	(*result)[stdconfig.LINES.String()] += bytes.Count(buffer, []byte{'\n'})
+	(*result)[stdconfig.LINES] += bytes.Count(buffer, []byte{'\n'})
 }
 
 func processWords(buffer []byte, result *stdconfig.Result, inWord *bool) {
@@ -66,7 +66,7 @@ func processWords(buffer []byte, result *stdconfig.Result, inWord *bool) {
 		} else {
 
 			if !*inWord {
-				(*result)[stdconfig.WORDS.String()]++
+				(*result)[stdconfig.WORDS]++
 				*inWord = true
 			}
 		}
@@ -93,7 +93,7 @@ func processRunes(buffer []byte, result *stdconfig.Result, leftOver *[]byte) {
 		// as we are sure there is atleast 1 rune ahed
 		_, size := utf8.DecodeRune(buffer[i:])
 
-		(*result)[stdconfig.RUNES.String()]++
+		(*result)[stdconfig.RUNES]++
 		i += size
 	}
 }
