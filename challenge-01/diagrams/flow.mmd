@@ -1,0 +1,25 @@
+flowchart TD
+
+    %% Parent nodes
+    Root([main])
+    End([end])
+    child1[Setup Flags & Config]
+    child2[Read Input]
+    child3["Update config(input)"]
+    child4[Analyzer]
+    child5["Update config(result)"]
+
+    %% Internal nodes
+    child21{Input Source?}
+    child41((process))
+
+    %% Flow
+    Root    --> child1
+    child1  --> child2
+    child2  --> child21
+    child21 --> |terminal| child3
+    child21 --> |stdin| child3
+    child3  --> child4
+    child4  --> |options| child41
+    child41 --> child5
+    child5  --> End
