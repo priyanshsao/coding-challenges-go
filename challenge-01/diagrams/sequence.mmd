@@ -1,0 +1,15 @@
+sequenceDiagram
+
+    %% module declaration
+    participant M as Main
+    participant C as Config
+    participant R as Reader
+    participant A as Analyzer
+
+    %% Sequence
+    M ->> C:    set configuration with flags
+    M ->> A:    read input
+    R ->> C:    update config(add input data)
+    M ->> A:    analyze input
+    A ->> C:    update config(add result data)
+    M ->> C:    get result
