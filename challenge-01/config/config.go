@@ -2,25 +2,26 @@ package config
 
 import "io"
 
+// FileOpts represents a supported file analysis option.
 type FileOpts int
 
-// Opts stores the options selected by the user.
+// Opts represents the operations requested by the user.
 type Opts map[FileOpts]bool
 
 // Result stores the computed values for each option.
 type Result map[FileOpts]int
 
 const (
-	// BYTES represents the byte count operation.
+	// BYTES represents byte count operation.
 	BYTES FileOpts = iota
 
-	// LINES represents the line count operation.
+	// LINES represents line count operation.
 	LINES
 
-	// WORDS represents the word count operation.
+	// WORDS represents word count operation.
 	WORDS
 
-	// RUNES represents the rune count operation.
+	// RUNES represents rune count operation.
 	RUNES
 )
 
@@ -39,6 +40,7 @@ type Config struct {
 	Result Result
 }
 
+// New returns a new config for analyzing input. 
 func New() *Config {
 
 	config := &Config{
@@ -49,6 +51,7 @@ func New() *Config {
 	return config
 }
 
+// String value of an operation.
 func (opts FileOpts) String() string {
 
 	var str string

@@ -8,13 +8,13 @@ import (
 	stdconfig "github.com/priyanshsao/coding-challenges-go/challenge-01/config"
 )
 
-// Process processes the input and returns result with all computed values according to options.
-func Process(config *stdconfig.Config) error {
+// Process computes the value of each option.
+func Process(c *stdconfig.Config) error {
 
 	buffer := make([]byte, 32*1024) //32kB
 	leftOver := []byte{}
 	inWord := false
-	reader := config.Reader
+	reader := c.Reader
 
 	for {
 		n, err := reader.Read(buffer)
@@ -25,19 +25,19 @@ func Process(config *stdconfig.Config) error {
 			return err
 		}
 
-		for opts, val := range config.Opts {
+		for opts, val := range c.Opts {
 
 			if val {
 
 				switch opts {
 				case stdconfig.BYTES:
-					processBytes(buffer[:n], &config.Result)
+					processBytes(buffer[:n], &c.Result)
 				case stdconfig.LINES:
-					processLines(buffer[:n], &config.Result)
+					processLines(buffer[:n], &c.Result)
 				case stdconfig.WORDS:
-					processWords(buffer[:n], &config.Result, &inWord)
+					processWords(buffer[:n], &c.Result, &inWord)
 				case stdconfig.RUNES:
-					processRunes(buffer[:n], &config.Result, &leftOver)
+					processRunes(buffer[:n], &c.Result, &leftOver)
 				}
 			}
 		}
@@ -73,11 +73,6 @@ func processWords(buffer []byte, result *stdconfig.Result, inWord *bool) {
 	}
 }
 
-func isSpace(b byte) bool {
-	// simple ASCII check
-	return b == ' ' || b == '\n' || b == '\t' || b == '\r'
-}
-
 func processRunes(buffer []byte, result *stdconfig.Result, leftOver *[]byte) {
 
 	buffer = append(*leftOver, buffer...)
@@ -96,4 +91,9 @@ func processRunes(buffer []byte, result *stdconfig.Result, leftOver *[]byte) {
 		(*result)[stdconfig.RUNES]++
 		i += size
 	}
+}
+
+func isSpace(b byte) bool {
+	// simple ASCII check
+	return b == ' ' || b == '\n' || b == '\t' || b == '\r'
 }
