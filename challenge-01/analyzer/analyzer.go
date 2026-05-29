@@ -73,11 +73,6 @@ func processWords(buffer []byte, result *stdconfig.Result, inWord *bool) {
 	}
 }
 
-func isSpace(b byte) bool {
-	// simple ASCII check
-	return b == ' ' || b == '\n' || b == '\t' || b == '\r'
-}
-
 func processRunes(buffer []byte, result *stdconfig.Result, leftOver *[]byte) {
 
 	buffer = append(*leftOver, buffer...)
@@ -96,4 +91,9 @@ func processRunes(buffer []byte, result *stdconfig.Result, leftOver *[]byte) {
 		(*result)[stdconfig.RUNES]++
 		i += size
 	}
+}
+
+func isSpace(b byte) bool {
+	// simple ASCII check
+	return b == ' ' || b == '\n' || b == '\t' || b == '\r'
 }
