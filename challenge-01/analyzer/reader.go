@@ -60,7 +60,7 @@ func getIpMode() (ipMode, error) {
 	return TERMINAL, nil
 }
 
-func readTerm(filePath string) (io.Reader, error) {
+func readTerm(filePath string) (*os.File, error) {
 
 	if trimmedFpath := strings.TrimSpace(filePath); trimmedFpath == "" {
 		return nil, ErrEmptyFilePath
