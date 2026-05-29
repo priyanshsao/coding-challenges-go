@@ -8,8 +8,8 @@ import (
 	stdconfig "github.com/priyanshsao/coding-challenges-go/challenge-01/config"
 )
 
-// Process processes the input and returns result with all computed values according to options.
-func Process(config *stdconfig.Config) error {
+// Process computes the value of each option.
+func Process(c *stdconfig.Config) error {
 
 	buffer := make([]byte, 32*1024) //32kB
 	leftOver := []byte{}
