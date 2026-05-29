@@ -70,8 +70,7 @@ func setLogger() {
 
 	// remove unwanted things and enforce colors
 	logrus.SetFormatter(&logrus.TextFormatter{
-		DisableTimestamp: true,
 		ForceColors:      true,
-		PadLevelText:     true,
+		DisableLevelTruncation: true,
 	})
 }
