@@ -15,8 +15,8 @@ const (
 	STD_IN
 )
 
-// Read reads the input
-func Read(config *config.Config) error {
+// Read reads the input and stores it in Config.
+func Read(c *config.Config) error {
 
 	mode, err := getIpMode()
 	if err != nil {
@@ -27,11 +27,11 @@ func Read(config *config.Config) error {
 
 	switch mode {
 	case TERMINAL:
-		if len(config.Args) == 0 {
+		if len(c.Args) == 0 {
 			// Todo: add debug.
 			return ErrNoArgProvided
 		}
-		reader, err = readTerm(config.Args[0])
+		reader, err = readTerm(c.Args[0])
 		if err != nil {
 			return err
 		}
@@ -40,7 +40,7 @@ func Read(config *config.Config) error {
 		reader = os.Stdin
 	}
 
-	config.Reader = reader
+	c.Reader = reader
 
 	return nil
 }
