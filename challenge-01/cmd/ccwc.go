@@ -6,7 +6,6 @@ import (
 
 	"github.com/priyanshsao/coding-challenges-go/challenge-01/analyzer"
 	"github.com/priyanshsao/coding-challenges-go/challenge-01/config"
-	stdconfig "github.com/priyanshsao/coding-challenges-go/challenge-01/config"
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,8 +13,8 @@ func main() {
 
 	setLogger()
 
-	config := config.New()
-	opts := config.Opts
+	c := config.New()
+	opts := c.Opts
 
 	// Register
 	byteFlag := flag.Bool("c", false, "print total bytes")
@@ -38,32 +37,35 @@ func main() {
 	// by program
 	flag.Parse()
 
-	config.Args = flag.CommandLine.Args()
+	c.Args = flag.CommandLine.Args()
 
 	if flag.NFlag() == 0 {
+		// Todo: add debug logs
 
-		opts[stdconfig.BYTES] = true
-		opts[stdconfig.LINES] = true
-		opts[stdconfig.WORDS] = true
+		opts[config.BYTES] = true
+		opts[config.LINES] = true
+		opts[config.WORDS] = true
 	} else {
 
-		opts[stdconfig.BYTES] = *byteFlag
-		opts[stdconfig.LINES] = *lineFlag
-		opts[stdconfig.WORDS] = *wordFlag
-		opts[stdconfig.RUNES] = *runeFlag
+		opts[config.BYTES] = *byteFlag
+		opts[config.LINES] = *lineFlag
+		opts[config.WORDS] = *wordFlag
+		opts[config.RUNES] = *runeFlag
 	}
 
-	if err := analyzer.Read(config); err != nil {
-		// log error
+	if err := analyzer.Read(c); err != nil {
+		// Todo: log error
+		logrus.Errorf("unable to read input: %v", err)
 		return
 	}
 
-	if err := analyzer.Process(config); err != nil {
-		// log error
+	if err := analyzer.Process(c); err != nil {
+		// Todo: log error
+		logrus.Errorf("unable to process input: %v", err)
 		return
 	}
 
-	fmt.Println(config.Result)
+	fmt.Println(c.Result)
 }
 
 func setLogger() {
