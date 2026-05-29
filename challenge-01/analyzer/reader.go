@@ -8,6 +8,7 @@ import (
 	"github.com/priyanshsao/coding-challenges-go/challenge-01/config"
 )
 
+// ipMode represents input mode
 type ipMode int
 
 const (
