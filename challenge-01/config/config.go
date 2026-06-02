@@ -40,7 +40,7 @@ type Config struct {
 	Result Result
 }
 
-// New returns a new config for analyzing input. 
+// New returns a new config for analyzing input.
 func New() *Config {
 
 	config := &Config{
@@ -51,7 +51,6 @@ func New() *Config {
 	return config
 }
 
-// String value of an operation.
 func (opts FileOpts) String() string {
 
 	var str string

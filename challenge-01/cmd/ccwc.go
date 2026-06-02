@@ -54,13 +54,11 @@ func main() {
 	}
 
 	if err := analyzer.Read(c); err != nil {
-		// Todo: log error
 		logrus.Errorf("unable to read input: %v", err)
 		return
 	}
 
 	if err := analyzer.Process(c); err != nil {
-		// Todo: log error
 		logrus.Errorf("unable to process input: %v", err)
 		return
 	}
@@ -72,7 +70,7 @@ func setLogger() {
 
 	// remove unwanted things and enforce colors
 	logrus.SetFormatter(&logrus.TextFormatter{
-		ForceColors:      true,
+		ForceColors:            true,
 		DisableLevelTruncation: true,
 	})
 }

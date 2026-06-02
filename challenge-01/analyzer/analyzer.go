@@ -5,11 +5,11 @@ import (
 	"io"
 	"unicode/utf8"
 
-	stdconfig "github.com/priyanshsao/coding-challenges-go/challenge-01/config"
+	"github.com/priyanshsao/coding-challenges-go/challenge-01/config"
 )
 
 // Process computes the value of each option.
-func Process(c *stdconfig.Config) error {
+func Process(c *config.Config) error {
 
 	buffer := make([]byte, 32*1024) //32kB
 	leftOver := []byte{}
@@ -30,13 +30,13 @@ func Process(c *stdconfig.Config) error {
 			if val {
 
 				switch opts {
-				case stdconfig.BYTES:
+				case config.BYTES:
 					processBytes(buffer[:n], &c.Result)
-				case stdconfig.LINES:
+				case config.LINES:
 					processLines(buffer[:n], &c.Result)
-				case stdconfig.WORDS:
+				case config.WORDS:
 					processWords(buffer[:n], &c.Result, &inWord)
-				case stdconfig.RUNES:
+				case config.RUNES:
 					processRunes(buffer[:n], &c.Result, &leftOver)
 				}
 			}
@@ -46,19 +46,19 @@ func Process(c *stdconfig.Config) error {
 	return nil
 }
 
-func processBytes(buffer []byte, result *stdconfig.Result) {
+func processBytes(buffer []byte, result *config.Result) {
 
 	if len(buffer) > 0 {
-		(*result)[stdconfig.BYTES] += len(buffer)
+		(*result)[config.BYTES] += len(buffer)
 	}
 }
 
-func processLines(buffer []byte, result *stdconfig.Result) {
+func processLines(buffer []byte, result *config.Result) {
 
-	(*result)[stdconfig.LINES] += bytes.Count(buffer, []byte{'\n'})
+	(*result)[config.LINES] += bytes.Count(buffer, []byte{'\n'})
 }
 
-func processWords(buffer []byte, result *stdconfig.Result, inWord *bool) {
+func processWords(buffer []byte, result *config.Result, inWord *bool) {
 
 	for _, b := range buffer {
 		if isSpace(b) {
@@ -66,14 +66,14 @@ func processWords(buffer []byte, result *stdconfig.Result, inWord *bool) {
 		} else {
 
 			if !*inWord {
-				(*result)[stdconfig.WORDS]++
+				(*result)[config.WORDS]++
 				*inWord = true
 			}
 		}
 	}
 }
 
-func processRunes(buffer []byte, result *stdconfig.Result, leftOver *[]byte) {
+func processRunes(buffer []byte, result *config.Result, leftOver *[]byte) {
 
 	buffer = append(*leftOver, buffer...)
 	*leftOver = (*leftOver)[:0]
@@ -88,7 +88,7 @@ func processRunes(buffer []byte, result *stdconfig.Result, leftOver *[]byte) {
 		// as we are sure there is atleast 1 rune ahed
 		_, size := utf8.DecodeRune(buffer[i:])
 
-		(*result)[stdconfig.RUNES]++
+		(*result)[config.RUNES]++
 		i += size
 	}
 }
