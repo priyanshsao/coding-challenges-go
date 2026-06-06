@@ -1,7 +1,7 @@
 flowchart TD
 
     %% base structure
-    root["NextToken()"] --> sws["SkipWhiteSpace()"] --> case{case}
+    root["NextToken()"] --> sws["skipWhiteSpace()"] --> case{case}
 
     %% Characters
     bo["{"]
@@ -17,9 +17,9 @@ flowchart TD
     lit["literal"]
 
     %% Functions
-    rn["ReadNum()"]
-    rl["ReadLiteral()"]
-    rs["ReadString()"]
+    rn["readNum()"]
+    rl["readLiteral()"]
+    rs["readString()"]
 
     %% Return values
     t_bo["BeginObject Token"]
