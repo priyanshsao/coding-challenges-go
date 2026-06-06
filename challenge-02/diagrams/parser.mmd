@@ -1,11 +1,11 @@
 flowchart TD
 
     %% Base Structure
-    root["Parse()"] --> pt["ParseToken()"] --> |"Move()"| cond{if} --> |equals to EOF| R1[Return parsed object]
+    root["Parse()"] --> pt["parseToken()"] --> |"move()"| cond{if} --> |equals to EOF| R1[Return parsed object]
 
     %% Functions
-    f_po["ParseObject()"]
-    f_pa["ParseArray()"]
+    f_po["parseObject()"]
+    f_pa["parseArray()"]
     
     pt --> case{"case(current token)"}
 
