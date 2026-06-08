@@ -10,8 +10,10 @@ import (
 type parser struct {
 	// lexer stores the lexer.
 	lexer *lexer.Lexer
+
 	// currentToken stores the token being parsed.
 	currentToken define.Token
+
 	// nextToken stores the token that is going to be parsed next.
 	nextToken define.Token
 }
