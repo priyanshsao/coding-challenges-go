@@ -1,6 +1,9 @@
 package lexer
 
-import "github.com/priyanshsao/coding-challenges-go/challenge-02/internal/define"
+import (
+	"github.com/priyanshsao/coding-challenges-go/challenge-02/internal/define"
+	"github.com/sirupsen/logrus"
+)
 
 // New returns a new lexer.
 func New(input []byte) *Lexer {
@@ -46,6 +49,8 @@ func (l *Lexer) NextToken() define.Token {
 			token = define.Token{Type: define.Illegal, Literal: string(l.char)}
 		}
 	}
+
+	logrus.Debugf("Token generated: %v(%q)", token.Type, token.Literal)
 
 	l.read()
 

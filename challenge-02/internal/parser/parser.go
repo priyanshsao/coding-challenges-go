@@ -158,5 +158,8 @@ func (p *parser) parseArray() (any, error) {
 func (p *parser) move() {
 
 	p.currentToken = p.nextToken
-	p.nextToken = p.lexer.NextToken()
+
+	if p.nextToken.Type != define.EOF {
+		p.nextToken = p.lexer.NextToken()
+	}
 }
