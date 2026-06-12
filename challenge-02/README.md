@@ -40,18 +40,32 @@ Reads the json input character by character and converts it into a sequence of t
 
 ```
 folder: challenge-02/
-├── tokens.go       # define tokens   
-├── lexer.go        # converts input into tokens
-├── errors.go       # introduce predefined errors
-├── parser.go       # parses tokens according to JSON rules
-├── main.go         # tests against files in 'test' folder
-|
-├── diagrams/       # flow diagrams for each layer of project
-├── tests/          # test files to test success of each step
-|
-├── lexer_test.go   # unit tests for lexer
-├── parser_test.go  # unit tests for parser
-
+├── cmd/
+│   └── main.go                 # Runs all the tests
+│
+├── internal/
+│   ├── define/
+│   │   └── tokens.go           # Token definitions
+│   │
+│   ├── lexer/
+│   │   ├── define.go           # Lexer definition
+│   │   ├── lexer.go            # Lexer methods
+│   │   ├── lexer_test.go       # Unit tests for lexer
+│   │   └── utils.go            # Helper functions
+│   │
+│   └── parser/
+│       ├── define.go           # Parser definition
+│       ├── parser.go           # Parser methods
+│       ├── parser_test.go      # Unit tests for parser
+│       └── errors.go           # Predefined parser errors
+│
+├── json/                       # main package to import
+│   ├── factory.go              # Factory functions for internals
+│   └── interface.go            # Parser interface definitions
+│
+├── diagrams/                   # Flow diagrams for each project layer
+│
+└── tests/                      # Test files for validating each step
 ```
 
 ## Example
@@ -88,7 +102,7 @@ cd challenge-02/
 ### Run program
 
 ```bash
-go run ./
+go run ./cmd/main.go
 ```
 
 ### Run unit tests
