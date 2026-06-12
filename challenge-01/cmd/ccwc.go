@@ -40,7 +40,7 @@ func main() {
 	c.Args = flag.CommandLine.Args()
 
 	if flag.NFlag() == 0 {
-		// Todo: add debug logs
+		logrus.Debugf("no flags provided, using defaults.")
 
 		opts[config.BYTES] = true
 		opts[config.LINES] = true
@@ -63,14 +63,17 @@ func main() {
 		return
 	}
 
-	fmt.Println(c.Result)
+	logrus.Info(c.Result)
 }
 
 func setLogger() {
 
-	// remove unwanted things and enforce colors
+	// remove unwanted things and enforce colors.
 	logrus.SetFormatter(&logrus.TextFormatter{
 		ForceColors:            true,
 		DisableLevelTruncation: true,
 	})
+
+	// set log level to debug.
+	logrus.SetLevel(logrus.DebugLevel)
 }
